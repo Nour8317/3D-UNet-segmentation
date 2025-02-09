@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/Brain Scan.png') }}">
+    <title>3D UNet Segmentation Model</title>
+     <link rel="stylesheet" href="../static/style.css">
+    
+</head>
+<body>
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='images/Brain Scan.png') }}" alt="Icon">
+        <h1>3D UNet Segmentation Model</h1>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <div id="overview" class="intro">
+                <img src="{{ url_for('static', filename='images/ms.avif') }}" alt="MS Image">
+                <div class="description">
+                    <h2>Multiple Sclerosis Overview</h2>
+                    <p>Multiple sclerosis (MS) is a chronic and often unpredictable disease that affects the central nervous system (CNS), which comprises the brain and spinal cord. In MS, the body’s immune system mistakenly targets and attacks the myelin sheath—a protective layer that surrounds and insulates nerve fibers. This damage disrupts the normal flow of electrical impulses along the nerves, leading to impaired communication between the brain and the rest of the body. Over time, this can result in the formation of scar tissue or lesions, further compromising nerve function. The effects of MS vary widely between individuals, with symptoms ranging from mild, such as fatigue or numbness, to severe, including mobility issues and cognitive decline. While the exact cause of MS remains unknown, it is believed to involve a combination of genetic predisposition and environmental factors, with the immune system playing a central role in disease progression.</p>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <div id="about" class="description">
+                <h2>About 3D UNet</h2>
+                <p>The 3D UNet model is a powerful and widely used deep learning architecture designed for medical image segmentation, particularly in applications requiring analysis of volumetric data, such as MRI or CT scans. Unlike its 2D counterpart, the 3D UNet extends the convolutional and pooling operations into three dimensions, enabling the model to capture spatial hierarchies and contextual information across the depth, height, and width of the data. This makes it particularly well-suited for volumetric scans, where structures of interest, such as lesions or organs, exist in three-dimensional space.</p>
+            </div>
+            <hr class="section-divider">
+            <div id="architecture" class="center-text">3D UNet Architecture</div>
+            <img class="full-width" src="{{ url_for('static', filename='images/3D UNet arch.jpeg') }}" alt="UNet Architecture">
+            <p>The 3D UNet architecture is an extension of the 2D UNet designed for volumetric data, making it ideal for tasks like 3D medical image segmentation. It follows an encoder-decoder structure with symmetric pathways. The encoder extracts hierarchical features through 3D convolutions, pooling, and activations, while the decoder reconstructs the segmentation map using up-sampling and transposed convolutions. Skip connections between corresponding encoder and decoder layers preserve spatial information lost during down-sampling, ensuring better localization. By operating on 3D input, the model captures volumetric context across depth, width, and height, which is crucial for accurate segmentation in medical imaging.</p>
+            <hr class="section-divider">
+            <div id="sample" class="center-text">Sample MS MRI Scan</div>
+            <div class="images">
+                <img src="{{ url_for('static', filename='images/flair.jpg') }}" alt="Sample Scan">
+                <img src="{{ url_for('static', filename='images/mask.jpg') }}" alt="Sample Mask">
+            </div>
+            <hr class="section-divider">
+            <div id="upload" class="upload-section">
+                <div class="drop-area" id="drop-area">
+                    Drag and drop your .nii files here or click to upload
+                    <input type="file" id="file-input" name="files" multiple accept=".nii" style="display: none;">
+                    <div id="file-list"></div> <!-- Placeholder for showing file details -->
+                </div>
+
+
+                <div class="button-group">
+                    <button class="button predict-button" id="predict-button">Predict</button>
+                    <button class="button cancel-button" id="cancel-button">Cancel</button>
+                </div>
+
+                <!-- Mask Placeholder -->
+                <div class="mask-placeholder" id="mask-placeholder">
+                    Predicted mask will appear here
+                </div>
+
+                <!-- Result Section -->
+                {% if result %}
+                    <h2>Result: {{ result }}</h2>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="sidebar">
+            <h2>Sections</h2>
+            <hr>
+            <a href="#overview">MS Overview</a>
+            <a href="#about">About 3D UNet</a>
+            <a href="#architecture">UNet Architecture</a>
+            <a href="#sample">Sample MRI Scan</a>
+            <a href="#upload">Upload MRI Scans</a>
+        </div>
+    </div>
+<script src="../static/script.js"></script>
+</body>
+</html>
