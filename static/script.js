@@ -69,15 +69,15 @@ document.addEventListener("DOMContentLoaded", function () {
 		fileInput.click();
 	});
 
-	// Predict button functionality
+
 	predictButton.addEventListener("click", () => {
 		maskPlaceholder.textContent = "Processing... Please wait.";
 	});
 
-	// Cancel button functionality
+
 	cancelButton.addEventListener("click", () => {
 		maskPlaceholder.textContent = "Prediction cancelled.";
-		fileInput.value = ""; // Reset the file input
-		fileList.innerHTML = ""; // Clear file list
+		fileInput.value = ""; 
+		fileList.innerHTML = ""; 
 	});
 });

@@ -39,27 +39,27 @@
             </div>
             <hr class="section-divider">
             <div id="upload" class="upload-section">
+                <form method="POST" enctype="multipart/form-data" action="/">
                 <div class="drop-area" id="drop-area">
                     Drag and drop your .nii files here or click to upload
-                    <input type="file" id="file-input" name="files" multiple accept=".nii" style="display: none;">
+                    <input type="file" id="file-input" name="files" multiple accept=".nii">
                     <div id="file-list"></div> <!-- Placeholder for showing file details -->
                 </div>
 
-
                 <div class="button-group">
-                    <button class="button predict-button" id="predict-button">Predict</button>
-                    <button class="button cancel-button" id="cancel-button">Cancel</button>
+                    <button type="submit" class="button predict-button" id="predict-button">Predict</button>
+                    <button type="reset" class="button cancel-button" id="cancel-button">Cancel</button>
                 </div>
-
-                <!-- Mask Placeholder -->
+            </form>
                 <div class="mask-placeholder" id="mask-placeholder">
-                    Predicted mask will appear here
+                        {% if result %}
+                            <p>Result: {{ result }}</p>
+                            {% if mask_path %}
+                                <img src="{{ mask_path }}" alt="Predicted Mask" style="max-width: 400px; border: 1px solid #ccc;"/>
+                            {% endif %}
+                        {% endif %}
                 </div>
 
-                <!-- Result Section -->
-                {% if result %}
-                    <h2>Result: {{ result }}</h2>
-                {% endif %}
             </div>
 
         </div>
