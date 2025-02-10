@@ -51,13 +51,13 @@
                     <button type="reset" class="button cancel-button" id="cancel-button">Cancel</button>
                 </div>
             </form>
-                <div class="mask-placeholder" id="mask-placeholder">
-                        {% if result %}
-                            <p>Result: {{ result }}</p>
-                            {% if mask_path %}
-                                <img src="{{ mask_path }}" alt="Predicted Mask" style="max-width: 400px; border: 1px solid #ccc;"/>
-                            {% endif %}
+                <div class="mask-placeholder" id="mask-placeholder" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #fff; min-height: 200px;">
+                    <div>
+                        {% if mask_path %}
+                            <h3>Prediction Completed</h3>
+                            <img src="{{ mask_path }}" alt="Predicted Mask" style="max-width: 100%; height: auto;">
                         {% endif %}
+                    </div>
                 </div>
 
             </div>

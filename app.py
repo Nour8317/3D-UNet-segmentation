@@ -5,6 +5,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
+from PIL import Image
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "./uploads"
@@ -88,10 +90,12 @@ class UNet3D(nn.Module):
 in_channels = 4  
 out_channels = 1 
 model = UNet3D(in_channels, out_channels)
+
 MODEL_PATH = './model.pth'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-model.eval()  
+model.to(device)
+model.eval()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -118,17 +122,48 @@ def index():
             data = (data - np.min(data)) / (np.max(data) - np.min(data))  # Normalize
             scans.append(data)
 
-        scans = np.stack(scans, axis=0)  # Shape: (4, D, H, W)
-        scans = np.expand_dims(scans, axis=0)  # Add batch dimension -> (1, 4, D, H, W)
-        input_tensor = torch.tensor(scans, dtype=torch.float32)  # Convert to PyTorch tensor
-
+        scans = np.stack(scans, axis=0)  
+        scans = np.expand_dims(scans, axis=0)  
+        input_tensor = torch.tensor(scans, dtype=torch.float32).to(device)
         
         with torch.no_grad():
             output = model(input_tensor)
-            output = output.squeeze().numpy()  
 
-        mask_path = os.path.join(app.config[PRED_FOLDER],"predicted_mask.png")
-        return render_template('index.html', result="prediction completed", mask_path = mask_path)
+            output = output.squeeze().cpu()  
+
+            output = (torch.sigmoid(output) > 0.5).float()
+            
+            output_np = (output.numpy() * 255).astype(np.uint8)
+            output_np = output_np.squeeze()
+            mask_img = Image.fromarray(output_np, mode="L")
+            mask_img.save(mask_path)
+        
+
+        with torch.no_grad():
+            mask_path = os.path.join(app.config['PRED_FOLDER'], "predicted_mask.png")
+            output_image = output.squeeze()
+
+            # Handle the case where the output has a batch dimension
+            if len(output_image.shape) == 4:  # [B, C, H, W]
+                output_image = output_image[0]  # Select the first batch item
+
+            if len(output_image.shape) == 3:  # [C, H, W]
+                # Select the middle slice along the depth (channel) dimension
+                middle_slice = output_image[output_image.shape[0] // 2]
+            elif len(output_image.shape) == 2:  # [H, W]
+                middle_slice = output_image  # Already a single 2D image
+            else:
+                raise ValueError("Unexpected dimensions in output tensor.")
+
+            # Plot and save the middle slice as a grayscale image
+            plt.imshow(middle_slice, cmap='gray')
+            plt.axis('off')  # Hide the axes
+            plt.savefig(mask_path, bbox_inches='tight', pad_inches=0)
+
+            print(f"Mask saved at: {mask_path}")
+
+
+        return render_template('index.html', result="Prediction completed", mask_path=mask_path)
 
     return render_template('index.html', result=None)
 
